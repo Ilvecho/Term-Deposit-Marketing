@@ -1,0 +1,29 @@
+RECAP
+
+Missing values:
+There are missing values in 'job', 'education', 'contact'. Options:
+- substitute missing values with the most frequent one
+- leave the values as missing -> additional category 
+- drop the samples with missing values
+- (infer the missing values using clustering + polling)
+
+Outliers:
+There are outliers in 'age', 'balance', 'duration' and 'campaign'. The options with outliers is whether or not to drop the samples
+- I would not drop the 'duration' outliers: a call with negative outcome usually lasts much less than one with a positive outcome. 
+  This dataset is highly unbalanced toward the No, so probably the distribution is biased toward 0, making longer calls outliers even if they are not. 
+  Furthermore, we are more interested in the Yes than the No, and in the duration outliers the probability of Yes is 60% - which makes sense rationally as well
+- I would drop the 'balance' outliers: logically someone with a big patrimony would be interested in investing in other instruments rather than term deposits - or in any case would not take financial decisions over a marketing campaing
+  This intuition is confirmed by the fact that a balance outlier has only 9% probability to say Yes.
+  On the other hand, people with bigger patrimony have more possibilities to invest. Matter of fact, the probability of Yes is still higher than the dataset average.
+  In conclusion, I would test both options 
+- I would follow the same approach for the feature 'campaign': there are few outliers and the probability of Yes is below the dataset average. This also makes sense logically: if a person is not interested, they will not accept it no matter the number of calls. Actually increasing the number of calls could produce a negative effect.
+  In any case, I would test both options
+  Looking at the correlation, actually the outliers have an higher probability of success! 
+- As we can see from the density plot, the 'age' distribution is much wider than the two above, and it is in line with the population age distribution. 
+  Hence, I would tend not to remove these outliers 
+
+
+Correlation:
+We notice that for each feature there is a correlation between the category and the probability of Yes.
+In particular, we noticed that the probability of success can vary quite a lot according to the specific category of the feature.
+Hopefully our model will learn these correlations to classify samples 
