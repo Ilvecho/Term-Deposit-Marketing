@@ -1,36 +1,46 @@
 XGBoost
-1/ No interventions on the dataset; default parameters
-Train accuracy score:  0.97725
-Test accuracy score:  0.9328333333333333
-Train confusion matrix:
-[[25876   108]
- [  529  1487]]
-Test confusion matrix:
-[[10864   256]
- [  550   330]]
-Train recall score:  0.7375992063492064
-Test recall score:  0.375
-Train AUC score:  0.86672140120416
-Test AUC score:  0.6759892086330935
+Evaluation: mean accuracy with 5-fold cross validation
 
-The accuracy is high both in training and test. However, looking at the confusion matrix we notice that the Yes are classified much worse than the No, especially in Test.
-Matter of fact, the recall score is low in both train and test, particularly in the latter.
+1/ No interventions on the dataset; default parameters
+Train accuracy score:  0.977375
+Test accuracy score:  0.6129999999999999
+
+Train recall score:  0.7519877111654266
+Test recall score:  0.19870585432672266
+
+The recall is extremely low: this is due to the labels imbalance. 
+Let's try to improve performance by using the parameter scale_pos_weight
 
 2/ No interventions on the dataset; used scale_pos_weight parameter, with the suggested value sum(negative instances) / sum(positive instances)
-Train accuracy score:  0.9425714285714286
-Test accuracy score:  0.90375
-Train confusion matrix:
-[[24392  1592]
- [   16  2000]]
-Test confusion matrix:
-[[10189   931]
- [  224   656]]
-Train recall score:  0.9920634920634921
-Test recall score:  0.7454545454545455
-Train AUC score:  0.9653975095785441
-Test AUC score:  0.8308657619359059
+Train accuracy score:  0.9456562500000001
+Test accuracy score:  0.5164500000000001
 
-The performance in terms of Accuracy are worse than before, both for train and test.
-However, a quick look at the Confusion Matrix highlights that the model is performing much better in the Yes classification. 
-Indeed, the recall increased significately both in train and test.
-Also the AUC score increased - indicating a overall improvement in the model
+Train recall score:  0.9947344214833217
+Test recall score:  0.24532606753618008
+
+The introduction of the parameter scale_pos_weight increased the recall performance, at the cost of lower accuracy.
+However, we are still far from the goal.
+
+
+Call Notes:
+for plotting use plotly instead of matplotlib 
+
+
+We are overfitting -> we need to prune the trees:
+- min_child_weight
+- max_depth
+- increase n_trees to 1000
+
+To know which features influence the Y/N 
+- partial dependent plot
+- predicted vs observed -> like the frequency plot + scatter, but the scatter is both labels and prediction
+
+Look if it's possible to group categories together.
+Check feature importance:
+one way to do it is create a random feature and if a feature importance is lower than the random, just discard it
+
+Next steps:
+- Reasonable tuning with above 3 params
+- Feature engineering
+- lastly, fine tuning 
+
