@@ -1,3 +1,48 @@
+Outliers analysis
+1/ Feature 'age'
+The distribution is quite wide, with a small number of outliers. By zooming in the outlier region, we notice that the ratio between yes and no is much higher than in the center of the distribution.
+This could indicate that samples that are outliers in this feature have an higher probability of saying yes. We will **not** remove the outliers from this feature
+
+2/ Feature 'balance'
+The distribution of the feature is very narrow, with outlier tails on both sides. 
+The left outliers region is not particularly long, and it is mainly filled with 'no' samples -> we might remove the samples with balance lower than -1000. It also makes sense logically: a broke individual is not going to open a deposit.
+The right region of outliers has two trends: in the first part (balance < 5000) we notice an increase of 'yes' samples, afterwards the outliers are mainly 'no'. 
+In this case, we might keep only the samples with balance between -1000 and 5000
+
+3/ Feature 'duration'
+Once again the distribution is quite narrow, with a long outlier tail on the positive side.
+Looking at the boxplot we notice that the distribution of 'yes' is centered around an higher value than the 'no'. This makes sense logically: if a customer accept an offer, the phone call will be longer - while if they are not interested, the call will be much shorted.
+After the value 2000 (i.e. 33 minutes), however, the number of samples drastically reduces -> the samples in this area are not statistically meaningful, so we are going to remove them.
+
+4/ Feature 'campaign'
+Also in this case the distribution is narrow with a long positive tail.
+There is a very limited number of 'yes' samples with campaign > 10, while the 'no's are much more. We can draw two conclusions from this:
+a) we shall remove the outliers with campaign > 10
+b) we shall advise our client to avoid calling the same individual more than 10 times
+
+
+Correlation analysis
+1/ Categorical features (including 'day')
+We observe some correlation between different categories and the probability of Yes. Hopefully, the model will identify and exploit such correlation
+
+2/ Feature 'age'
+We notice that in the center of the distribution, the probability of Yes is more or less constant -> we can consider to group together some values to reduce the number of possible values. 
+In the outlier region, on the other hand, we observe and increase in the probability of Yes. However, after the value 80 the probability is very scattered -> the number of samples in this region is extremely low, we might consider to cut them off
+
+3/ Feature 'campaign'
+In the outlier analysis, we suggested to remove the samples with campaign > 10. Looking at the correlation, we notice that the probability of Yes drops after 10, with some peaks that are due to the very limited number of samples. 
+In conclusion, the correlation analysis corroborates the conclusion of the outliers analysis
+
+4/ Feature 'balance'
+Once again, in the regions identified as outliers the probability of Yes is very low, with some peaks due to the low number of samples.
+However, we notice that this behavior starts slightly after the region previously identified. Hence, we might consider 10000 instead of 5000 as upper bound.
+
+5/ Feature 'duration'
+We observe that the probability of Yes increases with the increase of the duration. However, once again, after some point the trend disrupts because of the limited number of samples.
+Hence, also this analysis confirms that we shall remove the outliers with value above 2000
+
+
+
 XGBoost
 Evaluation: mean accuracy with 5-fold cross validation
 
@@ -23,9 +68,6 @@ However, we are still far from the goal.
 
 
 Call Notes:
-for plotting use plotly instead of matplotlib 
-
-
 We are overfitting -> we need to prune the trees:
 - min_child_weight
 - max_depth
@@ -36,11 +78,10 @@ To know which features influence the Y/N
 - predicted vs observed -> like the frequency plot + scatter, but the scatter is both labels and prediction
 
 Look if it's possible to group categories together.
-Check feature importance:
-one way to do it is create a random feature and if a feature importance is lower than the random, just discard it
+
+Check feature importance: one way to do it is create a random feature and if a feature importance is lower than the random, just discard it
 
 Next steps:
 - Reasonable tuning with above 3 params
 - Feature engineering
 - lastly, fine tuning 
-
