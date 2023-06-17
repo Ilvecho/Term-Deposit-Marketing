@@ -1,4 +1,11 @@
-Outliers analysis
+		###### MISSING DATA #######
+There are three features with missing data (category 'unknown')
+- JOB: a relatively small percentage of data (around 3%) 
+- EDUCATION: a relatively small percentage of data (around 5%)
+- CONTACT: a very high percentage of the data (around 40%)
+
+
+		###### OUTLIER ANALYSIS #######
 1/ Feature 'age'
 The distribution is quite wide, with a small number of outliers. By zooming in the outlier region, we notice that the ratio between yes and no is much higher than in the center of the distribution.
 This could indicate that samples that are outliers in this feature have an higher probability of saying yes. We will **not** remove the outliers from this feature
@@ -21,9 +28,12 @@ a) we shall remove the outliers with campaign > 10
 b) we shall advise our client to avoid calling the same individual more than 10 times
 
 
-Correlation analysis
+		###### CORRELATION ANALYSIS #######
 1/ Categorical features (including 'day')
 We observe some correlation between different categories and the probability of Yes. Hopefully, the model will identify and exploit such correlation
+	JOB: the 'unknown' have an average probability of Yes - it could be a mix of the other categories
+	EDUCATION: the 'unknown' have less than average probability of Yes, between the probability of class 'secondary' and 'primary' - could be a mix of the two categories
+	CONTACT: the 'unknown' have a much less than average probability of Yes - we must keep the class as is
 
 2/ Feature 'age'
 We notice that in the center of the distribution, the probability of Yes is more or less constant -> we can consider to group together some values to reduce the number of possible values. 
@@ -42,36 +52,65 @@ We observe that the probability of Yes increases with the increase of the durati
 Hence, also this analysis confirms that we shall remove the outliers with value above 2000
 
 
+		############################################################
+		#############		   XGBOOST		############
+		############################################################
+Training evaluation: train - test split 70-30 and metrics
+	train confusion matrix
+	test confusion matrix
+	train accuracy
+	test accuracy
+	train recall
+	test recall
+	train AUC
+	test AUC score
 
-XGBoost
-Evaluation: mean accuracy with 5-fold cross validation
+Final evaluation: mean accuracy with 5-fold cross validation
 
-1/ No interventions on the dataset; default parameters
-Train accuracy score:  0.977375
-Test accuracy score:  0.6129999999999999
 
-Train recall score:  0.7519877111654266
-Test recall score:  0.19870585432672266
+		########## DEFAULT DATASET - DEFAULT PARAMS     ############
+
+	********
 
 The recall is extremely low: this is due to the labels imbalance. 
 Let's try to improve performance by using the parameter scale_pos_weight
 
-2/ No interventions on the dataset; used scale_pos_weight parameter, with the suggested value sum(negative instances) / sum(positive instances)
-Train accuracy score:  0.9456562500000001
-Test accuracy score:  0.5164500000000001
 
-Train recall score:  0.9947344214833217
-Test recall score:  0.24532606753618008
+		########## DEFAULT DATASET - SCALE_POS_WEIGHT   ############
+Used scale_pos_weight parameter with the suggested value = sum(negative instances) / sum(positive instances)
+
+	********
 
 The introduction of the parameter scale_pos_weight increased the recall performance, at the cost of lower accuracy.
 However, we are still far from the goal.
 
 
-Call Notes:
-We are overfitting -> we need to prune the trees:
-- min_child_weight
-- max_depth
-- increase n_trees to 1000
+
+
+
+
+
+
+		###### NEXT STEPS #######
+- Basic model & data
+- a bit of tuning with the three params:
+	min_child_weight
+	max_depth
+	n_estimators -> you can go up to 100
+
+- Unbalanced dataset: Use "imbalanced learn library"
+	UNDERSAMPLER to perform undersampling -> might overfit the data, because it is generated from too little set
+	SNOTE to perform oversampling -> might overfit the positive, as there will be a lot of "copies" in the training
+- Decide what to do with the outliers:
+	JOB: leave the category, or remove the rows
+	EDUCATION: leave the category, make it the most frequent, or remove the rows
+	CONTACT: leave the category
+- Think what to do with outliers
+
+
+
+
+
 
 To know which features influence the Y/N 
 - partial dependent plot
@@ -80,8 +119,3 @@ To know which features influence the Y/N
 Look if it's possible to group categories together.
 
 Check feature importance: one way to do it is create a random feature and if a feature importance is lower than the random, just discard it
-
-Next steps:
-- Reasonable tuning with above 3 params
-- Feature engineering
-- lastly, fine tuning 
