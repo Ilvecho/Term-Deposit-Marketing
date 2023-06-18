@@ -628,14 +628,19 @@ Hence, under and over sampling are not the recommended way to proceed
 
 
 		###### NEXT STEPS #######
-- Unbalanced dataset: Use "imbalanced learn library"
-	UNDERSAMPLER to perform undersampling -> might overfit the data, because it is generated from too little set
-	SNOTE to perform oversampling -> might overfit the positive, as there will be a lot of "copies" in the training
 - Decide what to do with the missing values:
 	JOB: leave the category, or remove the rows
 	EDUCATION: leave the category, make it the most frequent, or remove the rows
 	CONTACT: leave the category
 - Think what to do with outliers
+
+		###### SUMMARY #####
+Over and under sampling might help improve the performance (especially the latter).
+However, they are based on the assumption that the available samples do not represent the true data distribution.
+Since this is not the case (most likely), the two approaches are not optimal.
+
+===> The only way we are going to deal with the unabalance is via SCALE_POS_WEIGHT
+
 
 
 
