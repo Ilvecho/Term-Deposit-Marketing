@@ -66,28 +66,142 @@ Training evaluation: train - test split 70-30 and metrics
 	test AUC score
 
 Final evaluation: mean accuracy with 5-fold cross validation
+Find target categories with Partial Dependence Plot
 
 
 		########## DEFAULT DATASET - DEFAULT PARAMS     ############
+TRAINING EVALUATION
+Train confusion matrix:
+[[25876   108]
+ [  529  1487]]
+Test confusion matrix:
+[[10864   256]
+ [  550   330]]
+Train accuracy score:  0.97725
+Test accuracy score:  0.9328333333333333
+Train recall score:  0.7375992063492064
+Test recall score:  0.375
+Train AUC score:  0.86672140120416
+Test AUC score:  0.6759892086330935
 
-	********
+FINAL EVALUATION
+Train accuracy score:  0.977375
+Test accuracy score:  0.6129999999999999
+Train recall score:  0.7519877111654266
+Test recall score:  0.19870585432672266
 
+The train accuracy is higher than the test one -> we are overfitting
 The recall is extremely low: this is due to the labels imbalance. 
 Let's try to improve performance by using the parameter scale_pos_weight
 
 
 		########## DEFAULT DATASET - SCALE_POS_WEIGHT   ############
-Used scale_pos_weight parameter with the suggested value = sum(negative instances) / sum(positive instances)
+Used scale_pos_weight parameter with the suggested value = sum(negative instances) / sum(positive instances) = 12.8
 
-	********
+TRAIN EVALUATION
+Train confusion matrix:
+[[24449  1535]
+ [    7  2009]]
+Test confusion matrix:
+[[10188   932]
+ [  221   659]]
+Train accuracy score:  0.9449285714285715
+Test accuracy score:  0.9039166666666667
+Train recall score:  0.9965277777777778
+Test recall score:  0.7488636363636364
+Train AUC score:  0.9687264812534209
+Test AUC score:  0.8325253433616744
 
 The introduction of the parameter scale_pos_weight increased the recall performance, at the cost of lower accuracy.
 However, we are still far from the goal.
 
 
+		########## DEFAULT DATASET - INITIAL TUNING   ############
+1/ ITERATION 1
+min_child_weight=10,
+max_depth=4,
+n_estimators=200,
+scale_pos_weight=spw
+
+Train confusion matrix:
+[[23749  2235]
+ [   29  1987]]
+Test confusion matrix:
+[[10035  1085]
+ [  167   713]]
+Train accuracy score:  0.9191428571428572
+Test accuracy score:  0.8956666666666667
+Train recall score:  0.9856150793650794
+Test recall score:  0.8102272727272727
+Train AUC score:  0.9498003044608648
+Test AUC score:  0.8563276651406146
 
 
+2/ ITERATION 2
+min_child_weight=20,
+max_depth=4,
+n_estimators=400,
+scale_pos_weight=spw
 
+Train confusion matrix:
+[[24055  1929]
+ [    7  2009]]
+Test confusion matrix:
+[[10146   974]
+ [  198   682]]
+Train accuracy score:  0.9308571428571428
+Test accuracy score:  0.9023333333333333
+Train recall score:  0.9965277777777778
+Test recall score:  0.775
+Train AUC score:  0.9611448925834701
+Test AUC score:  0.843705035971223
+
+
+3/ ITERATION 3
+min_child_weight=15,
+max_depth=4,
+n_estimators=300,
+scale_pos_weight=20
+
+Train confusion matrix:
+[[23656  2328]
+ [    3  2013]]
+Test confusion matrix:
+[[9989 1131]
+ [ 155  725]]
+Train accuracy score:  0.91675
+Test accuracy score:  0.8928333333333334
+Train recall score:  0.9985119047619048
+Test recall score:  0.8238636363636364
+Train AUC score:  0.9544591543513956
+Test AUC score:  0.8610775016350555
+
+
+4/ ITERATION 4
+min_child_weight=15,
+max_depth=4,
+n_estimators=300,
+scale_pos_weight=50
+
+Train confusion matrix:
+[[23012  2972]
+ [    0  2016]]
+Test confusion matrix:
+[[9716 1404]
+ [ 112  768]]
+Train accuracy score:  0.8938571428571429
+Test accuracy score:  0.8736666666666667
+Train recall score:  1.0
+Test recall score:  0.8727272727272727
+Train AUC score:  0.942810960591133
+Test AUC score:  0.8732341399607586
+
+Train accuracy score:  0.9071999999999999
+Test accuracy score:  0.5257499999999999
+Train recall score:  1.0
+Test recall score:  0.3150866535644095
+
+Good improvement on the recall, however it overfits the train positive samples
 
 
 
