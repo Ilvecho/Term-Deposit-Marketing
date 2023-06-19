@@ -520,7 +520,7 @@ Conclusion -> using a more balanced training set increase performance (if we red
 However, we observe an underfitting due to the small portion of the used training set
 
 
-		########## OVERSAMPLED DATASET - ITERATION 4 AND 12 TUNING  ############
+		########## OVERSAMPLED DATASET - ITERATION 12 AND 4 TUNING  ############
 strategy 1.0
 The training set is much bigger than in the undersampled case -> a lot of copies of the positive samples
 The model should highly overfit the positive training samples
@@ -625,24 +625,279 @@ From the problem description, however, we deduce that the strong unbalance is ex
 Hence, under and over sampling are not the recommended way to proceed
 
 
+		########## MISSING DATA JOB - ITERATION 4 AND 12 TUNING  ############
+Iteration 4 tuning
+min_child_weight=15,
+max_depth=4,
+n_estimators=300,
+learning_rate=0.3,
+scale_pos_weight=50
+
+Train confusion matrix:
+[[22850  2958]
+ [    0  2027]]
+Test confusion matrix:
+[[9655 1423]
+ [ 106  746]]
+Train accuracy score:  0.893730914316508
+Test accuracy score:  0.8718357082984074
+Train recall score:  1.0
+Test recall score:  0.8755868544600939
+Train AUC score:  0.9426921884686918
+Test AUC score:  0.8735670325739718
+
+Minimal improvement in the test recall, but we are talking about 0.1% order of magnitude.
+It is expected, as the number of samples with missing job is very small
+
+
+Iteration 12 tuning
+min_child_weight=15,
+max_depth=4,
+n_estimators=1000,
+learning_rate=0.1,
+scale_pos_weight=50
+
+Train confusion matrix:
+[[22736  3072]
+ [    0  2027]]
+Test confusion matrix:
+[[9593 1485]
+ [ 102  750]]
+Train accuracy score:  0.8896353511765762
+Test accuracy score:  0.8669740150880134
+Train recall score:  1.0
+Test recall score:  0.8802816901408451
+Train AUC score:  0.9404835709857409
+Test AUC score:  0.8731161113639773
+
+Minimal decrease in the results (once again, the difference is in the order of 0.1%)
+
+====> we can either leave the category or drop the rows, the effect is very small either ways
+
+
+		########## MISSING DATA EDUCATION - ITERATION 4 AND 12 TUNING  ############
+1/ Dropped the rows with missing data
+Iteration 4 tuning
+min_child_weight=15,
+max_depth=4,
+n_estimators=300,
+learning_rate=0.3,
+scale_pos_weight=50
+
+Train confusion matrix:
+[[22035  2933]
+ [    0  1960]]
+Test confusion matrix:
+[[9352 1349]
+ [  88  752]]
+Train accuracy score:  0.8910799168152109
+Test accuracy score:  0.8754873927735898
+Train recall score:  1.0
+Test recall score:  0.8952380952380953
+Train AUC score:  0.9412648189682794
+Test AUC score:  0.8845875552351582
+
+Slight improvement in the accuracy, 2% improvement in the Recall
+
+
+Iteration 12 tuning
+min_child_weight=15,
+max_depth=4,
+n_estimators=1000,
+learning_rate=0.1,
+scale_pos_weight=50
+
+Train confusion matrix:
+[[22123  2845]
+ [    0  1960]]
+Test confusion matrix:
+[[9401 1300]
+ [  88  752]]
+Train accuracy score:  0.8943478906714201
+Test accuracy score:  0.8797331253790832
+Train recall score:  1.0
+Test recall score:  0.8952380952380953
+Train AUC score:  0.9430270746555591
+Test AUC score:  0.8868770608888354
+
+Slight improvement in the accuracy, 1% improvement in the Recall
+=====> overall, removing the missing data seems to improve performance
+
+2/ Substitute with most frequent value (=secondary)
+Iteration 4 tuning
+min_child_weight=15,
+max_depth=4,
+n_estimators=300,
+learning_rate=0.3,
+scale_pos_weight=50
+
+Train confusion matrix:
+[[22912  3072]
+ [    0  2016]]
+Test confusion matrix:
+[[9701 1419]
+ [ 104  776]]
+Train accuracy score:  0.8902857142857142
+Test accuracy score:  0.8730833333333333
+Train recall score:  1.0
+Test recall score:  0.8818181818181818
+Train AUC score:  0.9408866995073892
+Test AUC score:  0.8771051340745586
+
+Slight decreace in all metrics, exept a small improvement in the test recall.
+However, dropping the missing values performs better than substituing them 
+
+
+Iteration 12 tuning
+min_child_weight=15,
+max_depth=4,
+n_estimators=1000,
+learning_rate=0.1,
+scale_pos_weight=50
+
+Train confusion matrix:
+[[22967  3017]
+ [    0  2016]]
+Test confusion matrix:
+[[9706 1414]
+ [ 105  775]]
+Train accuracy score:  0.89225
+Test accuracy score:  0.8734166666666666
+Train recall score:  1.0
+Test recall score:  0.8806818181818182
+Train AUC score:  0.9419450431034483
+Test AUC score:  0.8767617724002618
+
+Slight decreace in all metrics, exept a small improvement in the test recall.
+However, dropping the missing values performs better than substituing them.
+
+======> we decide to DROP the rows with missing values
+
+
+		########## DROP MISSING JOB & EDUCATION - ITERATION 4 AND 12 TUNING  ############
+Iteration 4 tuning
+min_child_weight=15,
+max_depth=4,
+n_estimators=300,
+learning_rate=0.3,
+scale_pos_weight=50
+
+Train confusion matrix:
+[[21883  2995]
+ [    0  1958]]
+Test confusion matrix:
+[[9246 1422]
+ [  80  754]]
+Train accuracy score:  0.8883961842301387
+Test accuracy score:  0.869414014953921
+Train recall score:  1.0
+Test recall score:  0.9040767386091128
+Train AUC score:  0.9398062545220677
+Test AUC score:  0.8853904502944326
+
+Improved the recall (1%) at the cost of accuracy (1%) -> we could balance this trade off by changing a bit the scale_pos_weight
+
+
+Iteration 12 tuning
+min_child_weight=15,
+max_depth=4,
+n_estimators=1000,
+learning_rate=0.1,
+scale_pos_weight=50
+
+Train confusion matrix:
+[[21884  2994]
+ [    0  1958]]
+Test confusion matrix:
+[[9232 1436]
+ [  77  757]]
+Train accuracy score:  0.8884334476076912
+Test accuracy score:  0.8684576595374718
+Train recall score:  1.0
+Test recall score:  0.907673860911271
+Train AUC score:  0.9398263526006914
+Test AUC score:  0.8865328434665092
+
+Improved the recall (1%) at the cost of accuracy (1%) -> we could balance this trade off by changing a bit the scale_pos_weight
+
+
+New tuning: reduced the scale_pos_weight
+Iteration 4 tuning
+min_child_weight=15,
+max_depth=4,
+n_estimators=300,
+learning_rate=0.3,
+scale_pos_weight=30
+
+Train confusion matrix:
+[[22275  2603]
+ [    0  1958]]
+Test confusion matrix:
+[[9416 1252]
+ [  89  745]]
+Train accuracy score:  0.9030034282307349
+Test accuracy score:  0.8834115805946792
+Train recall score:  1.0
+Test recall score:  0.8932853717026379
+Train AUC score:  0.9476847013425517
+Test AUC score:  0.8879625208719414
+
+Performance comparable to the one obtained dropping the education only and prior tuning
+
+
+Iteration 12 tuning
+min_child_weight=15,
+max_depth=4,
+n_estimators=1000,
+learning_rate=0.1,
+scale_pos_weight=30
+
+Train confusion matrix:
+[[22301  2577]
+ [    0  1958]]
+Test confusion matrix:
+[[9416 1252]
+ [  88  746]]
+Train accuracy score:  0.903972276047101
+Test accuracy score:  0.8834985219961746
+Train recall score:  1.0
+Test recall score:  0.894484412470024
+Train AUC score:  0.9482072513867674
+Test AUC score:  0.8885620412556344
+
+Performance slightly better but definitely comparable to the one obtained dropping the education only and prior tuning
+
 
 
 		###### NEXT STEPS #######
-- Decide what to do with the missing values:
-	JOB: leave the category, or remove the rows
-	EDUCATION: leave the category, make it the most frequent, or remove the rows
-	CONTACT: leave the category
+- for binary features, only one of the two columns of one hot encoding is used -> change encoding to make those features binary (and "save" one column)
 - Think what to do with outliers
+
 
 		###### SUMMARY #####
 Over and under sampling might help improve the performance (especially the latter).
-However, they are based on the assumption that the available samples do not represent the true data distribution.
+However, they are based on the assumption that the available samples do not represent the trues data distribution.
 Since this is not the case (most likely), the two approaches are not optimal.
 
 ===> The only way we are going to deal with the unabalance is via SCALE_POS_WEIGHT
 
+MISSING DATA
+There are three features with missing data: job, education and contact.
+In the latter, the missing data are almost 40% -> we must leave the category 'unknown'
+The missing data in job are very few (around 0.6%), while education is a bit more (around 3.8%)
+For job, we either leave the extra category, or drop the rows, while for education we can also fill in the most frequent feature (prob of Y is comparable)
+We expect little to no effect if we remove the missing values from the former, while the impact should be greater for the latter.
 
+- Removing the missing values in feature 'Job' has a non-noticeable effect on the performance
+- Removing the missing values in feature 'Education' increase accuracy (1%) and recall (2%)
+- Substituting the missing values in feature 'Education' slightly improve the performance, but less than dropping the rows
+- Dropping the rows in both Job and Education improve the performance, both in terms of accuracy and recall - but we need to decrease the scale_pos_weight value from 50 to 30
 
+===> We decide to drop the rows with missing values
+
+Regarding the feature contact, we might consider to drop the whole feature as there are a lot of missing values.
+However, looking at the feature importance, the feature 'contact - unknown' is the one with the highest value!
+Which means that the most effective way for the model to separate the data is based on the contact unknown.
 
 
 
